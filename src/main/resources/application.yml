@@ -1,0 +1,77 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: equity-dashboard
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      db-type: mysql
+      driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+      url: mpw:Wu9DxhdNFx/1zOeqIIvWrPQu6fHz01OWkWm2mGHR+Ru87buYqtgerYMITMHpp6h4V7beL1Zcj+/gcgE1norr4c++5jRm+iUJoYBXEvSHGvD/CtUHUnjRJClKkj89S35vPzY0vmEMAsZL9pnDpPQXtS56qfDQhBPVyZhihhOJPiuy7E9tWMgF6+bKtHOnjrqvJL7/AdC2dKeh57Y2Axp0M4dAND8+6r0BxuM73KvYQYuQSZIxiQnEeEqvVj4kmXQgUInvOFMgMeN2k+rk6CfJ4TDUUDN+uIGRhWoDXhydjEa5+Fm1jP9lLRDwtdR8PG9L
+      username: mpw:hOmzmncyVuxM5qF7CAhNEw==
+      password: mpw:qC/4GOWvY7AXkTHXm/bjFXJ5dSDac0mGzgOozcIXPOdwkZZn1Xj5neZEa/qIeB0T
+      initial-size: 5
+      max-active: 20
+      min-idle: 5
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      validation-query: SELECT 1 FROM DUAL
+      validation-query-timeout: 30000
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      stat-view-servlet:
+        login-username: root
+        login-password: 123456
+      filters: stat,wall
+  #redis配置
+  redis:
+    host: localhost
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 100
+        max-idle: 30
+        min-idle: 1
+        max-wait: PT10S
+    jedis:
+      pool:
+        max-wait: PT10S
+logging:
+  level:
+    com.antake: debug
+  file:
+    path: logs/${spring.application.name}.log
+mybatis-plus:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+#swagger开关
+swagger:
+  enable: true
+#jwt密钥
+jwt:
+  securityKey: antakeisthebest
+  accessTokenExpireTime: PT2H
+  refreshTokenExpireTime: PT48H
+  refreshTokenExpireAppTime: P30D
+  issuer: antake.best
+#图片验证码过期时间 m
+code:
+  expiration: 5
+#密码第一次解密,前端公钥加密，后端私钥解密
+rsa:
+  privateKey: mpw:otfLHIABHXNNydZdHsmTCzDUXJbHmFWV4LL48i4+B5CHqTM/uxguoJZEveLzKeYIY+5Cf6MZlZWyp36+vknb+JmcCnuULo/omUsUYDf9ZDwQvWWSgDUl2xzIDO078aptVulGgr2AsXWdlbxCeXKWOLk3tSEIwrtcRVH1JnLXBVE23NgYFvcnHlolE+N/SNVIuckhuw+DcsQgzqnEcm26wFjwK51gYXxHdlj+jTqLy7ftaPZvVsxLKlXNtjMbzVrGUc7CxWhlVeWI9FHe/42IO0hbHedlqmnMlduQcnrgCAKIdmmdirAqzJnZ3UuglkMHoloHV0q96hR5dwvg+VGx0Qsm7d+KHarlLNtiGr7kpOQYNHcKUIlFsnuVy+FwMuV9qEYx8Sf9rs0ZcWJZ6zcJNNbLcJ9bQGInFZ8PShzJQBQIECm7bmo9KKFM2/d5HtzHx+XT7vGPy7K1MW28KpDJn/KeyeWciBPU+i2f6EAQqSxNWd/m2mV5fJ40eZHIJNFqgoJtyAsWabgpvHJl23ULUDN9ih1deEBXLiFzP94PNgclW2AaL7VglbDABAeJ7Oxdgmzxe3iSMIObQ29fUdZ2zxKvTxxB2r5Ql8aXt0Nnoqc=
+#是否开启单例登录
+single:
+  login: true

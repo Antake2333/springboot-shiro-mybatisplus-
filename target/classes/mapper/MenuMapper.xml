@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.antake.mapper.MenuMapper">
+	<!--公共部分-->
+	<sql id="common_menus">
+		        SELECT DISTINCT
+	menu.id,
+	menu.path,
+	menu.i_frame,
+	menu.`name`,
+	menu.title,
+	menu.role,
+	menu.component,
+	menu.pid,
+	menu.sort,
+	menu.icon,
+	menu.no_cache,
+	menu.hidden,
+	menu.redirect,
+	menu.always_show,
+	menu.breadcrumb,
+	menu.affix,
+	menu.active_menu
+	</sql>
+    <select id="listMenusByUserId" resultMap="menusMap">
+       <include refid="common_menus"></include>
+FROM
+	role
+	INNER JOIN role_menu ON role.id = role_menu.role_id
+	INNER JOIN menu ON role_menu.menu_id = menu.id
+	INNER JOIN user_role ON role.id = user_role.role_id
+	AND user_role.user_id = #{userId}
+	AND menu.pid IS NULL
+ORDER BY
+	menu.sort ASC
+    </select>
+    <resultMap id="menusMap" type="com.antake.pojo.Menu">
+        <id column="id" property="id"></id>
+        <collection property="children" column="id" ofType="com.antake.pojo.Menu"  select="listMenusByParentId"></collection>
+    </resultMap>
+    <select id="listMenusByParentId" resultMap="menusMap">
+		<include refid="common_menus"></include>
+FROM
+	menu
+WHERE
+	menu.pid = #{id}
+ORDER BY
+	menu.sort ASC
+    </select>
+	<select id="listMenus" resultMap="listMenusMap">
+		<include refid="common_menus"></include>
+		FROM
+		menu
+		where menu.pid IS NULL
+		ORDER BY
+		menu.sort ASC
+	</select>
+	<resultMap id="listMenusMap" type="com.antake.pojo.Menu">
+		<id column="id" property="id"></id>
+		<collection property="children" column="id" ofType="com.antake.pojo.Menu"  select="listMenusByParentId"></collection>
+	</resultMap>
+	<select id="listMenusByPid" resultMap="listMenusMap">
+		<include refid="common_menus"></include>
+		FROM
+		menu
+		WHERE
+		menu.pid = #{id}
+		ORDER BY
+		menu.sort ASC
+	</select>
+	<select id="listMenuIds" resultType="java.lang.Integer">
+		SELECT DISTINCT menu.id FROM menu INNER JOIN role_menu ON menu.id=role_menu.menu_id
+		INNER JOIN user_role ON role_menu.role_id=user_role.role_id AND user_role.user_id=#{userId}
+	</select>
+</mapper>

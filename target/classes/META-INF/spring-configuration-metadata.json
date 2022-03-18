@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.antake.config.JwtTokenSetting",
+      "sourceType": "com.antake.config.JwtTokenSetting"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.access-token-expire-time",
+      "type": "java.time.Duration",
+      "sourceType": "com.antake.config.JwtTokenSetting"
+    },
+    {
+      "name": "jwt.issuer",
+      "type": "java.lang.String",
+      "sourceType": "com.antake.config.JwtTokenSetting"
+    },
+    {
+      "name": "jwt.refresh-token-expire-app-time",
+      "type": "java.time.Duration",
+      "sourceType": "com.antake.config.JwtTokenSetting"
+    },
+    {
+      "name": "jwt.refresh-token-expire-time",
+      "type": "java.time.Duration",
+      "sourceType": "com.antake.config.JwtTokenSetting"
+    },
+    {
+      "name": "jwt.security-key",
+      "type": "java.lang.String",
+      "sourceType": "com.antake.config.JwtTokenSetting"
+    }
+  ],
+  "hints": []
+}

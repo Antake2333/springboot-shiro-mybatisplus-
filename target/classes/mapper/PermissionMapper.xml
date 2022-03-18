@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.antake.mapper.PermissionMapper">
+    <select id="listPermissionsByUserIdAndTypeOrderByAsc" resultMap="permissionsMap">
+        SELECT DISTINCT permission.id,permission.`name`,permission.url,permission.method,permission.permission,permission.parent_id,permission.`order`,permission.type,permission.`status`,permission.gmt_create,permission.gmt_modified from role INNER JOIN role_permission
+        ON role.id=role_permission.role_id INNER JOIN permission
+        ON role_permission.permission_id=permission.id
+        INNER JOIN user_role ON role.id=user_role.role_id
+        AND user_role.user_id=#{userId} and permission.type=#{type} AND permission.parent_id is null AND permission.deleted=0 order by permission.order asc
+    </select>
+    <resultMap id="permissionsMap" type="com.antake.pojo.Permission">
+        <id column="id" property="id"></id>
+        <collection property="children" column="id" ofType="com.antake.pojo.Permission"  select="listPermissionsByParentId"></collection>
+    </resultMap>
+    <select id="listPermissionsByParentId" resultMap="permissionsMap">
+        SELECT DISTINCT id,`name`,url,method,permission,parent_id,`order`,`type`,`status`,gmt_create,
+        gmt_modified from permission where parent_id=#{id}  and deleted=0 AND `type`=0 order by `order` asc
+    </select>
+    <select id="listPermissions" resultMap="permissionsMap">
+        SELECT DISTINCT permission.id,permission.`name`,permission.url,permission.method,permission.permission,permission.parent_id,permission.`order`,permission.type,permission.`status`,permission.gmt_create,permission.gmt_modified from role INNER JOIN role_permission
+        ON role.id=role_permission.role_id INNER JOIN permission
+        ON role_permission.permission_id=permission.id
+        INNER JOIN user_role ON role.id=user_role.role_id
+        AND permission.parent_id is null AND permission.deleted=0 AND permission.type=0 order by permission.order asc
+    </select>
+</mapper>
