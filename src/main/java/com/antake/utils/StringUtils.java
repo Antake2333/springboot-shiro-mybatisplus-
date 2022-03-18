@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**功能描述：字符串工具类, 继承org.apache.commons.lang3.StringUtils类
  * @Auther:http://www.xueden.cn
@@ -188,7 +189,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
     public static String getIpArea(String ip) {
         if (Util.isIpAddress(ip)){
             try {
-                String dbPath = StringUtils.class.getResource(IPCONFIGDIR).getPath();
+                String dbPath = Objects.requireNonNull(StringUtils.class.getResource(IPCONFIGDIR)).getPath();
                 File file = new File(URLDecoder.decode(dbPath,"UTF-8"));
                 //linux没有文件路径映射，如果直接读取就会出错，报io异常
                 if (!file.exists()) {
@@ -196,7 +197,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
                     dbPath = tmpDir + "ip.db";
                     file = new File(dbPath);
                     if (!file.exists()){
-                        FileUtils.copyInputStreamToFile(StringUtils.class.getClassLoader().getResourceAsStream("classpath:ip2region/ip2region.db"), file);
+                        FileUtils.copyInputStreamToFile(Objects.requireNonNull(StringUtils.class.getClassLoader().getResourceAsStream("classpath:ip2region/ip2region.db")), file);
                     }
                 }
                 if (file.exists()){
@@ -220,6 +221,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
     }
 
     public static void main(String[] args) {
-        getIpArea("222.209.35.36");
+        System.out.println(getIpArea("222.209.35.36"));;
     }
 }

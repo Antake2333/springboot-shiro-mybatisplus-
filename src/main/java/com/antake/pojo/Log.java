@@ -55,7 +55,8 @@ public class Log implements Serializable {
     @JsonIgnore
     @ApiModelProperty(value = "日志类型")
     private String type;
-
+    @ApiModelProperty(value = "操作系统")
+    private String operatingSystem;
     @ApiModelProperty(value = "IP地址")
     private String ip;
     @ApiModelProperty(value = "城市信息")

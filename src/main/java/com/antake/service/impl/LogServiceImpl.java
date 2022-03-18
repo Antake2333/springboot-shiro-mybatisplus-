@@ -3,9 +3,8 @@ package com.antake.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.antake.annotations.EnableLog;
-import com.antake.pojo.Log;
 import com.antake.mapper.LogMapper;
-import com.antake.pojo.User;
+import com.antake.pojo.Log;
 import com.antake.service.LogService;
 import com.antake.utils.DataResult;
 import com.antake.utils.StringUtils;
@@ -38,22 +37,19 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     private LogMapper logMapper;
 
 
-    private  boolean checkField(JSONObject jsonObject, String field) {
+    private boolean checkField(JSONObject jsonObject, String field) {
         return jsonObject.containsKey(field) && !com.alibaba.druid.util.StringUtils.isEmpty(String.valueOf(jsonObject.get(field)));
     }
+
     @Override
     @Transactional(readOnly = true)
-    public DataResult listLogs(PageVO pageVO,String type) {
+    public DataResult listLogs(PageVO pageVO, String type) {
         QueryWrapper<Log> logQueryWrapper = new QueryWrapper<>();
         if (!com.alibaba.druid.util.StringUtils.isEmpty(pageVO.getCondition())) {
             JSONObject jsonObject = JSON.parseObject(pageVO.getCondition());
             if (checkField(jsonObject, "anyFiled")) {
                 String anyFiled = jsonObject.get("anyFiled").toString();
-                logQueryWrapper.like("username", anyFiled)
-                        .or().like("id", anyFiled)
-                        .or().like("operation", anyFiled)
-                        .or().like("browser", anyFiled)
-                        .or().like("cityInfo", anyFiled);
+                logQueryWrapper.like("username", anyFiled).or().like("id", anyFiled).or().like("operation", anyFiled).or().like("browser", anyFiled).or().like("cityInfo", anyFiled);
             }
             if (checkField(jsonObject, "startTime")) {
                 if (!"null".equals(String.valueOf(jsonObject.get("startTime")))) {
@@ -66,7 +62,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
                 }
             }
         }
-        logQueryWrapper.eq("type",type);
+        logQueryWrapper.eq("type", type);
         logQueryWrapper.orderByDesc("id");
         Page<Log> logPage = logMapper.selectPage(new Page<Log>(pageVO.getPage(), pageVO.getLimit()), logQueryWrapper);
         return DataResult.getSuccessResult(new PageRespVO<Log>().setItems(logPage.getRecords()).setTotal(logPage.getTotal()));
@@ -74,31 +70,31 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
 
     @Override
     public DataResult deleteAllLog(String type) {
-        int result=logMapper.delete(new UpdateWrapper<Log>().eq("type",type));
-        if (result>0){
+        int result = logMapper.delete(new UpdateWrapper<Log>().eq("type", type));
+        if (result > 0) {
             return DataResult.getSuccessResult();
-        }else {
+        } else {
             return DataResult.getFailResult();
         }
     }
 
     @Override
-    public void save(ProceedingJoinPoint joinPoint, Log log,String userId,String username, String browser, String ip) {
-        if (log==null || joinPoint==null){
+    public void save(ProceedingJoinPoint joinPoint, Log log, String userId, String username, String browser, String operatingSystem, String ip) {
+        if (log == null || joinPoint == null) {
             return;
         }
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        EnableLog aopLog=method.getAnnotation(EnableLog.class);
+        EnableLog aopLog = method.getAnnotation(EnableLog.class);
         // 方法路径
-        String methodName = joinPoint.getTarget().getClass().getName()+"."+signature.getName()+"()";
+        String methodName = joinPoint.getTarget().getClass().getName() + "." + signature.getName() + "()";
         log.setMethod(methodName);
         StringBuilder params = new StringBuilder("{");
         //参数值
         Object[] argValues = joinPoint.getArgs();
         //参数名称
-        String[] argNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
-        if(argValues != null){
+        String[] argNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
+        if (argValues != null) {
             for (int i = 0; i < argValues.length; i++) {
                 params.append(" ").append(argNames[i]).append(": ").append(argValues[i]);
             }
@@ -110,6 +106,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
         log.setOperation(aopLog.value());
         log.setIp(ip);
         log.setUsername(username);
+        log.setOperatingSystem(operatingSystem);
         log.setBrowser(browser);
         log.setCityInfo(StringUtils.getIpArea(ip));
         logMapper.insert(log);
